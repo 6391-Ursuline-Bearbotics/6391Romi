@@ -29,10 +29,10 @@ import frc.robot.subsystems.OnBoardIO.ChannelMode;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain m_drivetrain = new Drivetrain();
-  private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
+  private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.OUTPUT, ChannelMode.OUTPUT);
 
   // Assumes a gamepad plugged into channnel 0
-  private final Joystick m_controller = new Joystick(0);
+  private final Xbox6391 m_controller = new Xbox6391(0);
 
   // NOTE: The I/O pin functionality of the 5 exposed I/O pins depends on the hardware "overlay"
   // that is specified when launching the wpilib-ws server on the Romi raspberry pi.
@@ -62,14 +62,17 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Also set default commands here
     m_drivetrain.setDefaultCommand(new TeleopArcadeDrive(m_drivetrain,
-        () -> m_controller.getRawAxis(1),
-        () -> -m_controller.getRawAxis(2)));
+        () -> m_controller.JoystickLY(),
+        () -> -m_controller.JoystickRX()));
 
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
     onboardButtonA
       .whenActive(new PrintCommand("Button A Pressed"))
       .whenInactive(new PrintCommand("Button A Released"));
+    
+    m_controller.XButton.whenPressed(() -> m_onboardIO.setYellowLed(true));
+    m_controller.YButton.whenPressed(() -> m_onboardIO.setYellowLed(false));
   }
 
 
