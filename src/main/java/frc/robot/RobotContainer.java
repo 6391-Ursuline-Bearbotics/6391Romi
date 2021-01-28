@@ -8,15 +8,17 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-
+import frc.robot.UA6391.Xbox6391;
 import frc.robot.commands.TeleopArcadeDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
+import frc.robot.subsystems.PhotonVision;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
 
 
@@ -30,6 +32,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.OUTPUT, ChannelMode.OUTPUT);
+  private final PhotonVision m_photon = new PhotonVision("HD3000");
 
   // Assumes a gamepad plugged into channnel 0
   private final Xbox6391 m_controller = new Xbox6391(0);
@@ -73,6 +76,8 @@ public class RobotContainer {
     
     m_controller.XButton.whenPressed(() -> m_onboardIO.setYellowLed(true));
     m_controller.YButton.whenPressed(() -> m_onboardIO.setYellowLed(false));
+
+    m_controller.StartButton.whileHeld(() -> { m_photon.hasTarget() ? m_drivetrain.arcadeDrive(.25, 0) : m_drivetrain.arcadeDrive(0, .25) });
   }
 
 

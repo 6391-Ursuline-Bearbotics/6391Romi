@@ -16,7 +16,9 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  // Jason was here!
-  //Bella was here.....
-  //Mr. Weissert was here as well!
+  public static final class PhotonConstants {
+    public static final int kLimePipe = 0;
+    public static final int kHD3000Pipe = 0;
+    public static enum camera {HD3000,Limelight};
+  }
 }
