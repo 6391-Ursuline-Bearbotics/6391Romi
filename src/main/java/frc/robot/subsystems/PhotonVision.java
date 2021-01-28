@@ -19,8 +19,11 @@ public class PhotonVision {
       PhotonPipelineResult result = camera.getLatestResult();
 
       // Get a list of currently tracked targets.
-      List<PhotonTrackedTarget> targets = result.getTargets();
-      return targets.size();
+      if (result.hasTargets()) {
+         List<PhotonTrackedTarget> targets = result.getTargets();
+         return targets.size();
+      }
+      return 0;
    }
 
    public boolean hasTarget(){
@@ -31,7 +34,10 @@ public class PhotonVision {
       // Get the latest pipeline result.
       PhotonPipelineResult result = camera.getLatestResult();
 
-      return result.targets.get(0).getYaw();
+      if (result.hasTargets()) {
+         return result.targets.get(0).getYaw();
+      }
+      return 0;
    }
 
    public void setPipeline(int index) {
