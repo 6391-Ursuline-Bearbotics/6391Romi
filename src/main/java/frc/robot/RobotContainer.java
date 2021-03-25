@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.UA6391.Xbox6391;
+import frc.robot.commands.BallSearch;
 import frc.robot.commands.TeleopArcadeDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.OnBoardIO;
@@ -31,7 +32,7 @@ import frc.robot.subsystems.OnBoardIO.ChannelMode;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain m_drivetrain = new Drivetrain();
-  private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.OUTPUT, ChannelMode.OUTPUT);
+  private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.OUTPUT);
   private final PhotonVision m_photon = new PhotonVision("HD3000");
 
   // Assumes a gamepad plugged into channnel 0
@@ -71,19 +72,25 @@ public class RobotContainer {
     // Example of how to use the onboard IO
     Button onboardButtonA = new Button(m_onboardIO::getButtonAPressed);
     onboardButtonA
-      .whenActive(new PrintCommand("Button A Pressed"))
-      .whenInactive(new PrintCommand("Button A Released"));
-    
-    m_controller.XButton.whenPressed(() -> m_onboardIO.setYellowLed(true));
-    m_controller.YButton.whenPressed(() -> m_onboardIO.setYellowLed(false));
+      .whenActive(() -> m_onboardIO.setYellowLed(true))
+      .whenInactive(() -> m_onboardIO.setYellowLed(false));
 
-    m_controller.StartButton.whileHeld(() -> { m_photon.hasTarget() ? m_drivetrain.arcadeDrive(.25, 0) : m_drivetrain.arcadeDrive(0, .25) });
+    Button onboardButtonB = new Button(m_onboardIO::getButtonBPressed);
+    onboardButtonB
+      .whenActive(() -> m_onboardIO.setRedLed(true))
+      .whenInactive(() -> m_onboardIO.setRedLed(false));
+    
+    //m_controller.XButton.whenPressed(() -> m_onboardIO.setYellowLed(true));
+    //m_controller.YButton.whenPressed(() -> m_onboardIO.setYellowLed(false));
+
+    m_controller.StartButton.whenPressed(new BallSearch(m_drivetrain)).whenReleased(() -> m_drivetrain.arcadeDrive(0, 0));
+    //m_controller.StartButton.whileHeld(() -> m_photon.hasTarget() ? m_drivetrain.arcadeDrive(.25, 0) : m_drivetrain.arcadeDrive(0, .25) );
   }
 
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
+   *c
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
